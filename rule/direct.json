@@ -1,7 +1,14 @@
 {
   "rules": [
     {
+      "domain": [
+        "com.dupay.dupayPro"
+      ]
+    },
+    {
       "domain_keyword": [
+        "depay",
+        "dupay",
         "fuckcloudnative",
         "icloudnative",
         "qingstor",
