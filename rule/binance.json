@@ -2,13 +2,17 @@
   "rules": [
     {
       "domain_keyword": [
-        "binance"
+        "binance",
+        "depay",
+        "dupay"
       ]
     },
     {
       "domain_suffix": [
         "binance.com",
-        "binance.info"
+        "binance.info",
+        "depay.com",
+        "dupay.com"
       ]
     }
   ],
