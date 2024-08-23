@@ -1,6 +1,11 @@
 {
   "rules": [
     {
+      "domain": [
+        "com.focuschina.micen4supplier"
+      ]
+    },
+    {
       "domain_keyword": [
         "fuckcloudnative",
         "icloudnative",
