@@ -2,7 +2,8 @@
   "rules": [
     {
       "domain": [
-        "com.focuschina.micen4supplier"
+        "com.focuschina.micen4supplier",
+        "com.tencent.sportskbs"
       ]
     },
     {
@@ -10,6 +11,7 @@
         "fuckcloudnative",
         "icloudnative",
         "qingstor",
+        "tencent",
         "weixin"
       ]
     },
