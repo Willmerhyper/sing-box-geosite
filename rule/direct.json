@@ -1,0 +1,36 @@
+{
+  "rules": [
+    {
+      "domain": [
+        "com.focuschina.micen4supplier",
+        "com.tencent.sportskbs"
+      ]
+    },
+    {
+      "domain_keyword": [
+        "fuckcloudnative",
+        "icloudnative",
+        "qingstor",
+        "tencent",
+        "weixin"
+      ]
+    },
+    {
+      "domain_suffix": [
+        "cctv.cn",
+        "dida365.com",
+        "dupay.one",
+        "fast.com",
+        "jijifun.com",
+        "qlogo.cn",
+        "qpic.cn",
+        "qq.com",
+        "speedtest.net",
+        "weixinbridge.com",
+        "yangcs.net",
+        "yangshipin.cn"
+      ]
+    }
+  ],
+  "version": 2
+}
