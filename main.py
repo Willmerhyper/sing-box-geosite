@@ -1,11 +1,11 @@
 import pandas as pd
 import re
-import concurrent.futures
 import os
 import json
 import requests
 import yaml
 import ipaddress
+import subprocess
 from io import StringIO
 
 # 映射字典
@@ -13,7 +13,8 @@ MAP_DICT = {'DOMAIN-SUFFIX': 'domain_suffix', 'HOST-SUFFIX': 'domain_suffix', 'h
             'DOMAIN-KEYWORD':'domain_keyword', 'HOST-KEYWORD': 'domain_keyword', 'host-keyword': 'domain_keyword', 'IP-CIDR': 'ip_cidr',
             'ip-cidr': 'ip_cidr', 'IP-CIDR6': 'ip_cidr', 
             'IP6-CIDR': 'ip_cidr','SRC-IP-CIDR': 'source_ip_cidr', 'GEOIP': 'geoip', 'DST-PORT': 'port',
-            'SRC-PORT': 'source_port', "URL-REGEX": "domain_regex", "DOMAIN-REGEX": "domain_regex"}
+            'SRC-PORT': 'source_port', "URL-REGEX": "domain_regex", "DOMAIN-REGEX": "domain_regex",
+            'PROCESS-NAME': 'process_name', 'process-name': 'process_name'}
 
 def read_yaml_from_url(url):
     headers = {'User-Agent': 'Mozilla/5.0'}
@@ -119,17 +120,32 @@ def sort_dict(obj):
     else:
         return obj
 
-def parse_list_file(link, output_directory):
+def output_stem(link):
+    return os.path.basename(link).split('.')[0]
+
+def parse_list_file(links, output_directory):
+    # 同一输出文件名的多个来源先合并再编译，避免后一个覆盖前一个（Telegram）
+    if isinstance(links, str):
+        links = [links]
+    frames = []
+    for link in links:
+        try:
+            df, rules = parse_and_convert_to_dataframe(link)
+            if df is None:
+                raise ValueError('empty response')
+            frames.append(df)
+        except Exception as e:
+            print(f'获取链接出错，已跳过：{link}，原因：{str(e)}')
+    if not frames:
+        return None
     try:
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            results= list(executor.map(parse_and_convert_to_dataframe, [link]))  # 使用executor.map并行处理链接, 得到(df, rules)元组的列表
-            dfs = [df for df, rules in results]   # 提取df的内容
-            rules_list = [rules for df, rules in results]  # 提取逻辑规则rules的内容
-            df = pd.concat(dfs, ignore_index=True)  # 拼接为一个DataFrame
-        df = df[~df['pattern'].str.contains('#')].reset_index(drop=True)  # 删除pattern中包含#号的行
+        df = pd.concat(frames, ignore_index=True)  # 拼接为一个DataFrame
+        df = df[~df['pattern'].str.contains('#', na=False)].reset_index(drop=True)  # 删除pattern中包含#号的行
         df = df[df['pattern'].isin(MAP_DICT.keys())].reset_index(drop=True)  # 删除不在字典中的pattern
-        df = df.drop_duplicates().reset_index(drop=True)  # 删除重复行
         df['pattern'] = df['pattern'].replace(MAP_DICT)  # 替换pattern为字典中的值
+        # 不同来源可能用 DOMAIN-SUFFIX / HOST-SUFFIX 表示同一规则，映射后再去重
+        df['address'] = df['address'].astype(str).str.strip()
+        df = df.drop_duplicates(subset=['pattern', 'address']).reset_index(drop=True)
         os.makedirs(output_directory, exist_ok=True)  # 创建自定义文件夹
 
         result_rules = {"version": 2, "rules": []}
@@ -149,25 +165,26 @@ def parse_list_file(link, output_directory):
         if domain_entries:
             result_rules["rules"].insert(0, {'domain': domain_entries})
 
-        # 处理逻辑规则
-        """
-        if rules_list[0] != "[]":
-            result_rules["rules"].extend(rules_list[0])
-        """
-
         # 使用 output_directory 拼接完整路径
-        file_name = os.path.join(output_directory, f"{os.path.basename(link).split('.')[0]}.json")
+        file_name = os.path.join(output_directory, f"{output_stem(links[0])}.json")
         with open(file_name, 'w', encoding='utf-8') as output_file:
             result_rules_str = json.dumps(sort_dict(result_rules), ensure_ascii=False, indent=2)
             result_rules_str = result_rules_str.replace('\\\\', '\\')
             output_file.write(result_rules_str)
 
         srs_path = file_name.replace(".json", ".srs")
-        os.system(f"sing-box rule-set compile --output {srs_path} {file_name}")
+        completed = subprocess.run(
+            ["sing-box", "rule-set", "compile", "--output", srs_path, file_name],
+            check=False,
+        )
+        if completed.returncode != 0:
+            raise RuntimeError(f'sing-box rule-set compile failed for {file_name}')
         return file_name
+    except RuntimeError:
+        raise
     except Exception as e:
-        print(f'获取链接出错，已跳过：{link}，原因：{str(e)}')
-        pass
+        print(f'生成规则集出错，已跳过：{", ".join(links)}，原因：{str(e)}')
+        return None
 
 # 读取 links.txt 中的每个链接并生成对应的 JSON 文件
 with open("../links.txt", 'r') as links_file:
@@ -178,8 +195,17 @@ links = [l for l in links if l.strip() and not l.strip().startswith("#")]
 output_dir = "./"
 result_file_names = []
 
+grouped_links = {}
+group_order = []
 for link in links:
-    result_file_name = parse_list_file(link, output_directory=output_dir)
+    stem = output_stem(link)
+    if stem not in grouped_links:
+        grouped_links[stem] = []
+        group_order.append(stem)
+    grouped_links[stem].append(link)
+
+for stem in group_order:
+    result_file_name = parse_list_file(grouped_links[stem], output_directory=output_dir)
     result_file_names.append(result_file_name)
 
 # 打印生成的文件名

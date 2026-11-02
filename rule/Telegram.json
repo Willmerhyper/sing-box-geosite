@@ -50,6 +50,16 @@
         "5.28.192.0/18",
         "91.108.0.0/16"
       ]
+    },
+    {
+      "process_name": [
+        "Telegram.exe",
+        "nekox.messenger",
+        "org.telegram.messenger",
+        "telegram-desktop",
+        "tw.nekomimi.nekogram",
+        "xyz.nextalone.nagram"
+      ]
     }
   ],
   "version": 2
