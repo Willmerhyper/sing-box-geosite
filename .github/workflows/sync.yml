@@ -12,18 +12,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v7
     - name: "Setup sing-box"
       env:
-        SING_BOX_DEB_URL: "https://github.com/SagerNet/sing-box/releases/download/v1.10.0-alpha.27/sing-box_1.10.0-alpha.27_linux_amd64.deb"
+        SING_BOX_VERSION: "1.14.4"
       run: |
           set -Eeuo pipefail
-          wget -O sing-box.deb $SING_BOX_DEB_URL
-          sudo dpkg -i sing-box.deb
+          deb="sing-box_${SING_BOX_VERSION}_linux_amd64.deb"
+          wget -O "$deb" "https://github.com/SagerNet/sing-box/releases/download/v${SING_BOX_VERSION}/${deb}"
+          sudo dpkg -i "$deb"
+          sing-box version
     - name: Set up Python3
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v7
       with:
-        python-version: 3.x
+        python-version: "3.x"
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip

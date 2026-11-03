@@ -1,6 +1,8 @@
 https://raw.githubusercontent.com/NobyDa/Script/master/QuantumultX/Bilibili.list
 https://raw.githubusercontent.com/NobyDa/Script/master/Surge/WeChat.list
 https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/QuantumultX/Microsoft/Microsoft.list
+# Telegram: Clash and QuantumultX both write Telegram.json. They are merged
+# (domains, CIDRs, and Clash PROCESS-NAME). IP-ASN has no sing-box headless field.
 https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Telegram/Telegram.list
 https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/QuantumultX/Facebook/Facebook.list
 https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/QuantumultX/Telegram/Telegram.list
@@ -13,3 +15,11 @@ https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash
 https://adrules.top/adrules_domainset.txt
 https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/gfw.txt
 https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/anthropic.yaml
+# Formerly vendored from DivineEngine/Profiles, which is no longer published.
+# BlockiOSUpdate / GoogleVoice / Unbreak: ddgksf2013/Filter (Unbreak is a superset of the old list).
+# Hijacking: blackmatrix7, same list with one equivalent CIDR aggregation.
+# Privacy is intentionally not listed: no maintained source matches that small set.
+https://raw.githubusercontent.com/ddgksf2013/Filter/master/BlockiOSUpdate.list
+https://raw.githubusercontent.com/ddgksf2013/Filter/master/GoogleVoice.list
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/QuantumultX/Hijacking/Hijacking.list
+https://raw.githubusercontent.com/ddgksf2013/Filter/master/Unbreak.list

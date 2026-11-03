@@ -31,10 +31,16 @@
     },
     {
       "domain_suffix": [
+        "bilivideo.cn",
+        "bilivideo.com",
         "blog.google",
-        "googletraveladservices.com"
+        "dns.weixin.qq.com",
+        "dns.weixin.qq.com.cn",
+        "googletraveladservices.com",
+        "stats.qiumibao.com",
+        "umiwi.com"
       ]
     }
   ],
-  "version": 1
+  "version": 2
 }
