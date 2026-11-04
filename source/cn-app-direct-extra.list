@@ -1,0 +1,14 @@
+# Hand-maintained additions merged into cn-app-direct.
+# WeChat Pay. tenpay.com is a suffix so wx.tenpay.com matches.
+# The two weixin hosts are exact domains, so weixin.qq.com itself does not match.
+DOMAIN-SUFFIX,tenpay.com
+DOMAIN,pay.weixin.qq.com
+DOMAIN,payapp.weixin.qq.com
+
+# CITIC is not in MetaCubeX category-bank-cn. geosite/citic.yaml already
+# covers citicbank.com, ecitic.com, and the .citic / .中信 suffixes, so no
+# extra CITIC domains are listed here.
+
+# Carrier endpoints. Also present on the ChinaUnicom and ChinaMobile Clash lists.
+IP-CIDR,113.200.56.63/32,no-resolve
+IP-CIDR,117.161.2.5/32,no-resolve
