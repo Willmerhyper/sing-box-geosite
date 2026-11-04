@@ -16,21 +16,38 @@ MAP_DICT = {'DOMAIN-SUFFIX': 'domain_suffix', 'HOST-SUFFIX': 'domain_suffix', 'h
             'SRC-PORT': 'source_port', "URL-REGEX": "domain_regex", "DOMAIN-REGEX": "domain_regex",
             'PROCESS-NAME': 'process_name', 'process-name': 'process_name'}
 
+def is_remote(link):
+    return link.startswith('http://') or link.startswith('https://')
+
+def repo_path(link):
+    if os.path.isabs(link):
+        return link
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), link)
+
+def read_text(link):
+    # 远程链接保持原来的请求方式；仓库内相对路径按 main.py 所在目录解析
+    if is_remote(link):
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        response = requests.get(link, headers=headers)
+        response.raise_for_status()
+        return response.text
+    with open(repo_path(link), 'r', encoding='utf-8') as handle:
+        return handle.read()
+
 def read_yaml_from_url(url):
-    headers = {'User-Agent': 'Mozilla/5.0'}
-    response = requests.get(url, headers=headers)
-    response.raise_for_status()
-    yaml_data = yaml.safe_load(response.text)
-    return yaml_data
+    return yaml.safe_load(read_text(url))
 
 def read_list_from_url(url):
-    headers = {'User-Agent': 'Mozilla/5.0'}
-    response = requests.get(url, headers=headers)
-    if response.status_code == 200:
-        csv_data = StringIO(response.text)
-        df = pd.read_csv(csv_data, header=None, names=['pattern', 'address', 'other', 'other2', 'other3'], on_bad_lines='skip')
+    if is_remote(url):
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            return None
+        text = response.text
     else:
-        return None
+        text = read_text(url)
+    csv_data = StringIO(text)
+    df = pd.read_csv(csv_data, header=None, names=['pattern', 'address', 'other', 'other2', 'other3'], on_bad_lines='skip')
     filtered_rows = []
     rules = []
     # 处理逻辑规则
@@ -123,10 +140,27 @@ def sort_dict(obj):
 def output_stem(link):
     return os.path.basename(link).split('.')[0]
 
-def parse_list_file(links, output_directory):
+def parse_source_line(line):
+    # `name=URL` 或 `name=仓库内路径`：同名行合并成一个规则集。
+    # 普通 URL 仍按文件名分组，和以前一样（例如两个 Telegram.list）。
+    stripped = line.strip()
+    name, sep, location = stripped.partition('=')
+    if (
+        sep
+        and name
+        and location
+        and '://' not in name
+        and re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.-]*', name)
+    ):
+        return name, location
+    return output_stem(line), line
+
+def parse_list_file(links, output_directory, output_name=None):
     # 同一输出文件名的多个来源先合并再编译，避免后一个覆盖前一个（Telegram）
     if isinstance(links, str):
         links = [links]
+    if not output_name:
+        output_name = output_stem(links[0])
     frames = []
     for link in links:
         try:
@@ -135,6 +169,9 @@ def parse_list_file(links, output_directory):
                 raise ValueError('empty response')
             frames.append(df)
         except Exception as e:
+            # 仓库内手工列表缺失应让构建失败；远程源失败仍跳过，避免单个上游拖垮全部规则集
+            if not is_remote(link):
+                raise
             print(f'获取链接出错，已跳过：{link}，原因：{str(e)}')
     if not frames:
         return None
@@ -166,7 +203,7 @@ def parse_list_file(links, output_directory):
             result_rules["rules"].insert(0, {'domain': domain_entries})
 
         # 使用 output_directory 拼接完整路径
-        file_name = os.path.join(output_directory, f"{output_stem(links[0])}.json")
+        file_name = os.path.join(output_directory, f"{output_name}.json")
         with open(file_name, 'w', encoding='utf-8') as output_file:
             result_rules_str = json.dumps(sort_dict(result_rules), ensure_ascii=False, indent=2)
             result_rules_str = result_rules_str.replace('\\\\', '\\')
@@ -197,15 +234,15 @@ result_file_names = []
 
 grouped_links = {}
 group_order = []
-for link in links:
-    stem = output_stem(link)
-    if stem not in grouped_links:
-        grouped_links[stem] = []
-        group_order.append(stem)
-    grouped_links[stem].append(link)
+for line in links:
+    name, location = parse_source_line(line)
+    if name not in grouped_links:
+        grouped_links[name] = []
+        group_order.append(name)
+    grouped_links[name].append(location)
 
-for stem in group_order:
-    result_file_name = parse_list_file(grouped_links[stem], output_directory=output_dir)
+for name in group_order:
+    result_file_name = parse_list_file(grouped_links[name], output_directory=output_dir, output_name=name)
     result_file_names.append(result_file_name)
 
 # 打印生成的文件名
