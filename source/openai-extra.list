@@ -1,0 +1,8 @@
+# Hand-maintained additions merged into the OpenAI rule-set.
+# DOMAIN-SUFFIX matches the apex and every subdomain.
+# These domains are not in the blackmatrix7 OpenAI list. aihubmix.com is the
+# same local AI-group suffix already used alongside Perplexity.
+DOMAIN-SUFFIX,aihubmix.com
+DOMAIN-SUFFIX,perplexity.ai
+DOMAIN-SUFFIX,perplexity.com
+DOMAIN-SUFFIX,pplx.ai

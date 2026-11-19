@@ -19,6 +19,7 @@
     {
       "domain_suffix": [
         "ai.com",
+        "aihubmix.com",
         "algolia.net",
         "api.statsig.com",
         "auth0.com",
@@ -38,6 +39,9 @@
         "openai.com",
         "openaiapi-site.azureedge.net",
         "openaicom.imgix.net",
+        "perplexity.ai",
+        "perplexity.com",
+        "pplx.ai",
         "segment.io",
         "sentry.io",
         "stripe.com",
