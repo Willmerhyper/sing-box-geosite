@@ -1,0 +1,20 @@
+{
+  "rules": [
+    {
+      "domain_suffix": [
+        "canva.cn",
+        "canva.com",
+        "canva.me",
+        "canva.site",
+        "canvasite.cn",
+        "canvastatus.com"
+      ]
+    },
+    {
+      "package_name": [
+        "com.canva.canvaeditor"
+      ]
+    }
+  ],
+  "version": 2
+}

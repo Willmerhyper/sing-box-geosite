@@ -2,8 +2,10 @@
   "rules": [
     {
       "domain": [
+        "httpdns.aliyuncs.com",
         "pay.weixin.qq.com",
-        "payapp.weixin.qq.com"
+        "payapp.weixin.qq.com",
+        "resolvers-cn.httpdns.aliyuncs.com"
       ]
     },
     {
@@ -440,6 +442,7 @@
         "hx168.com.cn",
         "hxb.com.cn",
         "hxzq.cn",
+        "hyperchem.vip",
         "i618.com.cn",
         "ibangbank.com",
         "icbc",
@@ -500,6 +503,7 @@
         "id6.me",
         "ifaa.org.cn",
         "igwfmc.com",
+        "intersky.com.cn",
         "iptv.gd.cn",
         "iwuyou189.cn",
         "iwuyou189.com",
@@ -513,6 +517,7 @@
         "kcbebank.com",
         "kshbank.cn",
         "kysec.cn",
+        "labgogo.com",
         "langke.tv",
         "lczq.com",
         "lhzq.com",
@@ -521,6 +526,7 @@
         "lovev.com",
         "lufunds.com",
         "luohanacademy.com",
+        "medkoo.com",
         "mfcteda.com",
         "migu.cn",
         "migucc.cn",
@@ -542,6 +548,7 @@
         "mucfc.com",
         "mybank.cn",
         "mychinaunicom.com",
+        "myds.me",
         "nesc.cn",
         "newupbank.com",
         "nffund.com",
@@ -549,6 +556,7 @@
         "njzq.com.cn",
         "nntlj.com",
         "nomuraoi-sec.com",
+        "nxonearth.com",
         "ocfund.cn",
         "olatop.cn",
         "olatop.com",
@@ -691,7 +699,13 @@
     {
       "ip_cidr": [
         "113.200.56.63/32",
-        "117.161.2.5/32"
+        "117.161.2.5/32",
+        "8.136.7.91/32"
+      ]
+    },
+    {
+      "package_name": [
+        "com.intersky.InterSkyForeignTrade"
       ]
     }
   ],
