@@ -1,0 +1,10 @@
+# Canva. The live config pins this set to the US outbound.
+# canva.cn and canvasite.cn belong here, not in cn-app-direct or any
+# China/direct set. amazonaws.com and Affinity/Serif domains are omitted.
+DOMAIN-SUFFIX,canva.com
+DOMAIN-SUFFIX,canva.cn
+DOMAIN-SUFFIX,canvastatus.com
+DOMAIN-SUFFIX,canva.site
+DOMAIN-SUFFIX,canvasite.cn
+DOMAIN-SUFFIX,canva.me
+PACKAGE-NAME,com.canva.canvaeditor

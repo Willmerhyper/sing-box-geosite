@@ -12,3 +12,25 @@ DOMAIN,payapp.weixin.qq.com
 # Carrier endpoints. Also present on the ChinaUnicom and ChinaMobile Clash lists.
 IP-CIDR,113.200.56.63/32,no-resolve
 IP-CIDR,117.161.2.5/32,no-resolve
+
+# 畅享云 / Ningbo Intersky. Official hostnames are under this suffix.
+# 8.136.7.91/32 is the Aliyun CN address the app uses. geoip-cn misses
+# 8.136.0.0/16; do not widen this to the /16.
+DOMAIN-SUFFIX,intersky.com.cn
+PACKAGE-NAME,com.intersky.InterSkyForeignTrade
+IP-CIDR,8.136.7.91/32,no-resolve
+
+# Aliyun CN HTTPDNS. Shared with other apps, not InterSky-only.
+# Exact domains: DOMAIN-SUFFIX,httpdns.aliyuncs.com would also match
+# resolvers-hk/sg/us/de.httpdns.aliyuncs.com, which stay out.
+DOMAIN,httpdns.aliyuncs.com
+DOMAIN,resolvers-cn.httpdns.aliyuncs.com
+
+# Personal direct suffixes. This repo has no separate personal-direct
+# rule-set, so they are merged into cn-app-direct with the other
+# hand-maintained direct rules.
+DOMAIN-SUFFIX,hyperchem.vip
+DOMAIN-SUFFIX,myds.me
+DOMAIN-SUFFIX,medkoo.com
+DOMAIN-SUFFIX,labgogo.com
+DOMAIN-SUFFIX,nxonearth.com
